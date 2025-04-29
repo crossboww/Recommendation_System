@@ -16,11 +16,20 @@ if st.button("Recommend Dishes"):
         "fat": fat,
         "fiber": fiber
     }
-    res = requests.get(url, params=params)
-    data = res.json()
 
-    if "recommendations" in data:
-        for dish in data["recommendations"]:
-            st.write(f"{dish['dish_name']} - Protein: {dish['protein']}, Carbs: {dish['carbs']}, Fat: {dish['fat']}, Fiber: {dish['fiber']}")
-    else:
-        st.warning("No dishes found.")
+    # Debugging: Print URL and Params
+    print("URL:", url)
+    print("Params:", params)
+
+    try:
+        res = requests.get(url, params=params)
+        res.raise_for_status()  # Will raise an HTTPError for bad responses
+        data = res.json()
+
+        if "recommendations" in data:
+            for dish in data["recommendations"]:
+                st.write(f"{dish['dish_name']} - Protein: {dish['protein']}, Carbs: {dish['carbs']}, Fat: {dish['fat']}, Fiber: {dish['fiber']}")
+        else:
+            st.warning("No dishes found.")
+    except requests.exceptions.RequestException as e:
+        st.error(f"An error occurred: {e}")
